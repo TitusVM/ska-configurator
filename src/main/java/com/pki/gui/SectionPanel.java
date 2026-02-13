@@ -2,9 +2,12 @@ package com.pki.gui;
 
 import com.pki.model.Operations;
 import com.pki.model.SkaSection;
+import com.pki.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Panel for editing an SKA section (organization, skaplus, or skamodify).
@@ -38,6 +41,13 @@ public class SectionPanel extends JPanel {
         opTabs.addTab("Block", blockPanel);
         opTabs.addTab("Unblock", unblockPanel);
         add(opTabs, BorderLayout.CENTER);
+    }
+
+    public void setUserListSupplier(Supplier<List<User>> supplier) {
+        usePanel.setUserListSupplier(supplier);
+        modifyPanel.setUserListSupplier(supplier);
+        blockPanel.setUserListSupplier(supplier);
+        unblockPanel.setUserListSupplier(supplier);
     }
 
     public void loadFrom(SkaSection section) {

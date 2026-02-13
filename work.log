@@ -62,10 +62,13 @@
 - [x] 6.6 Build + smoke test OK
 
 ### Phase 7: Swing GUI — user management
-- [ ] 7.1 Users panel (table with cn, email, org, cert status)
-- [ ] 7.2 CSV import flow + cert change detection & prompt
-- [ ] 7.3 Manual user add/edit/remove
-- [ ] 7.4 Assign users to groups (drag or combo)
+- [x] 7.1 UsersPanel: JTable (CN, Name, Email, Organisation, UserID, Cert ✓/—), add/edit/remove/view cert buttons
+- [x] 7.2 UserEditDialog: modal form for add/edit user (CN required, name, email, org, userId, cert PEM)
+- [x] 7.3 UserPickerDialog: multi-select modal to pick users by CN for group membership
+- [x] 7.4 OperationPanel: "Pick from Users…" button, user supplier pattern, dedup on add
+- [x] 7.5 SectionPanel/KeysProtoPanel: setUserListSupplier pass-through
+- [x] 7.6 MainFrame: Users tab wired, user supplier connected to all section panels
+- [x] 7.7 Build + all 8 tests pass
 
 ### Phase 8: Validation & polish
 - [ ] 8.1 Input validation (XML safety, cert parsing, required fields)

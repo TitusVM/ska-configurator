@@ -3,12 +3,14 @@ package com.pki.gui;
 import com.pki.model.Boundary;
 import com.pki.model.Group;
 import com.pki.model.Operation;
+import com.pki.model.User;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Panel for editing a single Operation (use, modify, block, or unblock).
@@ -38,6 +40,13 @@ public class OperationPanel extends JPanel {
     // Toggle between members and keys
     private final JRadioButton membersRadio = new JRadioButton("Members (CNs)", true);
     private final JRadioButton keysRadio = new JRadioButton("Keys (labels)");
+
+    // Supplier for the current user list (set by MainFrame)
+    private Supplier<List<User>> userListSupplier;
+
+    public void setUserListSupplier(Supplier<List<User>> supplier) {
+        this.userListSupplier = supplier;
+    }
 
     public OperationPanel() {
         setLayout(new BorderLayout(6, 6));
@@ -155,6 +164,10 @@ public class OperationPanel extends JPanel {
         removeMemberBtn.addActionListener(e -> removeMember());
         addRow.add(addMemberBtn);
         addRow.add(removeMemberBtn);
+        addRow.add(Box.createHorizontalStrut(8));
+        JButton pickUsersBtn = new JButton("Pick from Users…");
+        pickUsersBtn.addActionListener(e -> doPickUsers());
+        addRow.add(pickUsersBtn);
         addRow.add(Box.createHorizontalStrut(16));
         addRow.add(applyBtn);
         listPanel.add(addRow, BorderLayout.SOUTH);
@@ -310,6 +323,35 @@ public class OperationPanel extends JPanel {
     private void removeMember() {
         int idx = memberList.getSelectedIndex();
         if (idx >= 0) memberListModel.remove(idx);
+    }
+
+    private void doPickUsers() {
+        if (keysRadio.isSelected()) {
+            JOptionPane.showMessageDialog(this,
+                    "Switch to 'Members (CNs)' mode to pick users.",
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (userListSupplier == null) return;
+        List<User> users = userListSupplier.get();
+        if (users.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No users available. Import a CSV or add users first.",
+                    "No Users", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        UserPickerDialog dlg = new UserPickerDialog(
+                owner instanceof JFrame ? (JFrame) owner : null, users);
+        dlg.setVisible(true);
+        for (String cn : dlg.getSelectedCns()) {
+            // Avoid duplicates in the current member list
+            boolean exists = false;
+            for (int i = 0; i < memberListModel.size(); i++) {
+                if (memberListModel.get(i).equals(cn)) { exists = true; break; }
+            }
+            if (!exists) memberListModel.addElement(cn);
+        }
     }
 
     // --- Helpers ---

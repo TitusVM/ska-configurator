@@ -26,6 +26,7 @@ public class MainFrame extends JFrame {
     private final SectionPanel skaPlusPanel;
     private final SectionPanel skaModifyPanel;
     private final KeysProtoPanel keysProtoPanel;
+    private final UsersPanel usersPanel;
     private final JTabbedPane tabbedPane;
     private final JLabel statusBar;
 
@@ -48,12 +49,21 @@ public class MainFrame extends JFrame {
         skaPlusPanel = new SectionPanel();
         skaModifyPanel = new SectionPanel();
         keysProtoPanel = new KeysProtoPanel();
+        usersPanel = new UsersPanel();
+
+        // Wire user list supplier so operation panels can pick users
+        java.util.function.Supplier<java.util.List<User>> userSupplier = () -> config.getUsers();
+        organizationPanel.setUserListSupplier(userSupplier);
+        skaPlusPanel.setUserListSupplier(userSupplier);
+        skaModifyPanel.setUserListSupplier(userSupplier);
+        keysProtoPanel.setUserListSupplier(userSupplier);
+
         tabbedPane.addTab("Global Config", globalConfigPanel);
         tabbedPane.addTab("Organization", organizationPanel);
         tabbedPane.addTab("SKA Plus", skaPlusPanel);
         tabbedPane.addTab("SKA Modify", skaModifyPanel);
         tabbedPane.addTab("Keys (Proto)", keysProtoPanel);
-        // Phase 7 will add users tab here
+        tabbedPane.addTab("Users", usersPanel);
         add(tabbedPane, BorderLayout.CENTER);
 
         // Status bar
@@ -325,7 +335,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel.loadFrom(config.getSkaPlus());
         skaModifyPanel.loadFrom(config.getSkaModify());
         keysProtoPanel.loadFrom(config.getKeysProto());
-        // Phase 7 panel will be loaded here too
+        usersPanel.loadFrom(config.getUsers());
         updateTitle();
     }
 
@@ -338,7 +348,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel.saveTo(config.getSkaPlus());
         skaModifyPanel.saveTo(config.getSkaModify());
         keysProtoPanel.saveTo(config.getKeysProto());
-        // Phase 7 panel will be collected here too
+        // UsersPanel edits the list in-place, no explicit saveTo needed
     }
 
     private void updateTitle() {
