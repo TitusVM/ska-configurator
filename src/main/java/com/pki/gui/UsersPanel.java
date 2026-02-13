@@ -7,6 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Panel for viewing and managing users in the configuration.
@@ -18,6 +19,30 @@ public class UsersPanel extends JPanel {
     private final UserTableModel tableModel;
     private final JTable table;
     private List<User> users = new ArrayList<>();
+    private Consumer<String> statusCallback;
+    private Runnable dirtyCallback;
+
+    /**
+     * Set a callback for status bar messages.
+     */
+    public void setStatusCallback(Consumer<String> callback) {
+        this.statusCallback = callback;
+    }
+
+    /**
+     * Set a callback to mark the configuration as dirty.
+     */
+    public void setDirtyCallback(Runnable callback) {
+        this.dirtyCallback = callback;
+    }
+
+    private void postStatus(String msg) {
+        if (statusCallback != null) statusCallback.accept(msg);
+    }
+
+    private void markDirty() {
+        if (dirtyCallback != null) dirtyCallback.run();
+    }
 
     public UsersPanel() {
         setLayout(new BorderLayout(0, 8));
@@ -65,11 +90,15 @@ public class UsersPanel extends JPanel {
     private void doAdd() {
         UserEditDialog dlg = new UserEditDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this), null);
+        dlg.setExistingCns(users.stream().map(User::getCn).toList());
         dlg.setVisible(true);
         User newUser = dlg.getResult();
         if (newUser != null) {
             users.add(newUser);
             tableModel.fireTableDataChanged();
+            table.setRowSelectionInterval(users.size() - 1, users.size() - 1);
+            markDirty();
+            postStatus("Added user: " + newUser.getCn());
         }
     }
 
@@ -87,6 +116,8 @@ public class UsersPanel extends JPanel {
         if (result != null) {
             // result is the same object, edited in place
             tableModel.fireTableRowsUpdated(row, row);
+            markDirty();
+            postStatus("Updated user: " + result.getCn());
         }
     }
 
@@ -104,6 +135,8 @@ public class UsersPanel extends JPanel {
         if (confirm != JOptionPane.YES_OPTION) return;
         users.remove(row);
         tableModel.fireTableDataChanged();
+        markDirty();
+        postStatus("Removed user: " + user.getCn());
     }
 
     private void doViewCert() {

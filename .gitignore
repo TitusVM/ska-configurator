@@ -1,2 +1,6 @@
 target/
 exports/
+examples/
+dependency-reduced-pom.xml
+*.iml
+.idea/

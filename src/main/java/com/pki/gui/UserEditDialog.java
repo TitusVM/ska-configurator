@@ -4,6 +4,9 @@ import com.pki.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Modal dialog for adding or editing a user.
@@ -21,6 +24,8 @@ public class UserEditDialog extends JDialog {
 
     private User result = null;
     private final User editing;
+    private List<String> existingCns;
+    private Consumer<String> statusCallback;
 
     /**
      * @param owner  parent frame
@@ -84,6 +89,25 @@ public class UserEditDialog extends JDialog {
 
         setSize(700, 550);
         setLocationRelativeTo(owner);
+
+        // Escape key closes the dialog
+        getRootPane().registerKeyboardAction(e -> doCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+
+    /**
+     * Set existing CNs to check for duplicates when adding.
+     */
+    public void setExistingCns(List<String> cns) {
+        this.existingCns = cns;
+    }
+
+    /**
+     * Set a callback for status bar messages.
+     */
+    public void setStatusCallback(Consumer<String> callback) {
+        this.statusCallback = callback;
     }
 
     private void addFormRow(JPanel form, GridBagConstraints gbc, int row,
@@ -104,6 +128,32 @@ public class UserEditDialog extends JDialog {
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
             cnField.requestFocusInWindow();
             return;
+        }
+
+        // Check for duplicate CN on add (not on edit of same user)
+        if (existingCns != null && (editing == null || !editing.getCn().equals(cn))) {
+            if (existingCns.contains(cn)) {
+                JOptionPane.showMessageDialog(this,
+                        "A user with CN \"" + cn + "\" already exists.",
+                        "Duplicate CN", JOptionPane.WARNING_MESSAGE);
+                cnField.requestFocusInWindow();
+                return;
+            }
+        }
+
+        // Validate certificate PEM format if provided
+        String cert = certArea.getText().trim();
+        if (!cert.isEmpty() && !isValidPem(cert)) {
+            int ans = JOptionPane.showConfirmDialog(this,
+                    "The certificate does not appear to be valid PEM format\n"
+                            + "(missing BEGIN/END CERTIFICATE markers).\n\n"
+                            + "Save it anyway?",
+                    "PEM Format Warning", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (ans != JOptionPane.YES_OPTION) {
+                certArea.requestFocusInWindow();
+                return;
+            }
         }
 
         if (editing != null) {
@@ -127,6 +177,11 @@ public class UserEditDialog extends JDialog {
             result = u;
         }
         dispose();
+    }
+
+    private boolean isValidPem(String text) {
+        return text.contains("-----BEGIN CERTIFICATE-----")
+                && text.contains("-----END CERTIFICATE-----");
     }
 
     private void doCancel() {

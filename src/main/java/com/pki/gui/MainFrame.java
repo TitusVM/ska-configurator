@@ -9,6 +9,8 @@ import com.pki.model.User;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class MainFrame extends JFrame {
 
     private SkaConfig config;
     private File currentFile;
+    private boolean dirty = false;
 
     private final GlobalConfigPanel globalConfigPanel;
     private final SectionPanel organizationPanel;
@@ -34,7 +37,13 @@ public class MainFrame extends JFrame {
         super("SKA Configurator");
         this.config = new SkaConfig();
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                doExit();
+            }
+        });
         setSize(1100, 750);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -50,6 +59,8 @@ public class MainFrame extends JFrame {
         skaModifyPanel = new SectionPanel();
         keysProtoPanel = new KeysProtoPanel();
         usersPanel = new UsersPanel();
+        usersPanel.setStatusCallback(this::setStatus);
+        usersPanel.setDirtyCallback(this::markDirty);
 
         // Wire user list supplier so operation panels can pick users
         java.util.function.Supplier<java.util.List<User>> userSupplier = () -> config.getUsers();
@@ -116,7 +127,7 @@ public class MainFrame extends JFrame {
         importCsvItem.addActionListener(e -> doImportCsv());
 
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> dispose());
+        exitItem.addActionListener(e -> doExit());
 
         fileMenu.add(newItem);
         fileMenu.addSeparator();
@@ -135,18 +146,18 @@ public class MainFrame extends JFrame {
     // --- File operations ---
 
     private void doNew() {
-        int result = JOptionPane.showConfirmDialog(this,
-                "Create a new empty configuration?\nAny unsaved changes will be lost.",
-                "New Configuration", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (result != JOptionPane.OK_OPTION) return;
+        if (!confirmDiscardChanges("Create New")) return;
 
         this.config = new SkaConfig();
         this.currentFile = null;
+        this.dirty = false;
         loadModelIntoUI();
         setStatus("New configuration created");
     }
 
     private void doOpen() {
+        if (!confirmDiscardChanges("Open File")) return;
+
         JFileChooser chooser = new JFileChooser(".");
         chooser.setDialogTitle("Open SKA XML Configuration");
         chooser.setFileFilter(new FileNameExtensionFilter("XML files (*.xml)", "xml"));
@@ -157,6 +168,7 @@ public class MainFrame extends JFrame {
             SkaXmlReader reader = new SkaXmlReader();
             this.config = reader.read(file);
             this.currentFile = file;
+            this.dirty = false;
             loadModelIntoUI();
             setStatus("Loaded: " + file.getName() + "  (" + config.getUsers().size() + " users)");
         } catch (Exception ex) {
@@ -201,9 +213,22 @@ public class MainFrame extends JFrame {
     private void saveToFile(File file) {
         try {
             collectUIIntoModel();
+
+            // Pre-save validation warnings
+            String warnings = buildSaveWarnings();
+            if (!warnings.isEmpty()) {
+                int ans = JOptionPane.showConfirmDialog(this,
+                        "The configuration has potential issues:\n\n" + warnings
+                                + "\nSave anyway?",
+                        "Validation Warnings", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+                if (ans != JOptionPane.YES_OPTION) return;
+            }
+
             SkaXmlWriter writer = new SkaXmlWriter();
             writer.write(config, file);
             this.currentFile = file;
+            this.dirty = false;
             setStatus("Saved: " + file.getName());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
@@ -239,6 +264,7 @@ public class MainFrame extends JFrame {
 
             loadModelIntoUI();
             setStatus("Imported " + imported.size() + " users from " + file.getName());
+            markDirty();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Failed to import CSV:\n" + ex.getMessage(),
@@ -340,6 +366,90 @@ public class MainFrame extends JFrame {
     }
 
     /**
+     * Mark the configuration as having unsaved changes.
+     */
+    public void markDirty() {
+        if (!dirty) {
+            dirty = true;
+            updateTitle();
+        }
+    }
+
+    /**
+     * Ask the user to confirm discarding unsaved changes.
+     * Returns true if we should proceed, false to cancel.
+     */
+    private boolean confirmDiscardChanges(String action) {
+        if (!dirty) return true;
+        int ans = JOptionPane.showConfirmDialog(this,
+                "You have unsaved changes.\n\nDiscard changes and " + action.toLowerCase() + "?",
+                action, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        return ans == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Exit the application, prompting to save if dirty.
+     */
+    private void doExit() {
+        if (dirty) {
+            int ans = JOptionPane.showConfirmDialog(this,
+                    "You have unsaved changes.\n\nSave before exiting?",
+                    "Exit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (ans == JOptionPane.CANCEL_OPTION || ans == JOptionPane.CLOSED_OPTION) return;
+            if (ans == JOptionPane.YES_OPTION) {
+                doSave();
+                // If save was cancelled (no file chosen), don't exit
+                if (dirty) return;
+            }
+        }
+        dispose();
+        System.exit(0);
+    }
+
+    /**
+     * Build a string of validation warnings before saving.
+     */
+    private String buildSaveWarnings() {
+        StringBuilder sb = new StringBuilder();
+        if (config.getModuleName().isEmpty()) {
+            sb.append("  \u2022 Module name is empty\n");
+        }
+        long missingCerts = config.getUsers().stream()
+                .filter(u -> u.getCertificate().isEmpty()).count();
+        if (missingCerts > 0) {
+            sb.append("  \u2022 ").append(missingCerts).append(" user(s) have no certificate\n");
+        }
+        // Check for empty groups in all sections
+        int emptyGroups = countEmptyGroups(config.getOrganization().getOperations())
+                + countEmptyGroups(config.getSkaPlus().getOperations())
+                + countEmptyGroups(config.getSkaModify().getOperations())
+                + countEmptyGroups(config.getKeysProto().getOperations());
+        if (emptyGroups > 0) {
+            sb.append("  \u2022 ").append(emptyGroups).append(" group(s) have no members/keys\n");
+        }
+        // Date format warnings
+        for (String w : globalConfigPanel.validateFields()) {
+            sb.append("  \u2022 ").append(w).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private int countEmptyGroups(com.pki.model.Operations ops) {
+        int count = 0;
+        for (var op : List.of(ops.getUse(), ops.getModify(), ops.getBlock(), ops.getUnblock())) {
+            for (var b : op.getBoundaries()) {
+                for (var g : b.getGroups()) {
+                    if (g.getMemberCns().isEmpty() && g.getKeyLabels().isEmpty()
+                            && g.getQuorum() > 0) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
      * Pull UI panel data back into the model.
      */
     private void collectUIIntoModel() {
@@ -358,7 +468,8 @@ public class MainFrame extends JFrame {
         }
         if (!config.getModuleName().isEmpty()) {
             title += " [" + config.getModuleName() + "]";
-        }
-        setTitle(title);
+        }        if (dirty) {
+            title += " *";
+        }        setTitle(title);
     }
 }

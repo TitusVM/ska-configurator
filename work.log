@@ -1,6 +1,6 @@
 # SKA Configurator - Work Log
 
-## Status: PLANNING COMPLETE — READY TO IMPLEMENT
+## Status: COMPLETE
 
 ### Decisions (from user, 2026-02-13)
 - Java 21, Swing GUI
@@ -71,11 +71,20 @@
 - [x] 7.7 Build + all 8 tests pass
 
 ### Phase 8: Validation & polish
-- [ ] 8.1 Input validation (XML safety, cert parsing, required fields)
-- [ ] 8.2 Confirmation dialogs for destructive ops
-- [ ] 8.3 Error messages & status bar feedback
+- [x] 8.1 Dirty flag: tracks unsaved changes, title bar shows `*` when dirty
+- [x] 8.2 Unsaved-changes guard: New/Open prompt to discard; Exit prompts save/discard/cancel
+- [x] 8.3 Window close intercept (DO_NOTHING_ON_CLOSE + WindowAdapter → doExit)
+- [x] 8.4 Save validation warnings: missing module name, missing certs, empty groups, bad date formats
+- [x] 8.5 GlobalConfigPanel: date format tooltips (YYYY-MM-DD), validateFields() method
+- [x] 8.6 UserEditDialog: PEM format warning (BEGIN/END markers), duplicate CN check, Escape to close
+- [x] 8.7 UserPickerDialog: Escape to close, null-safe return (empty list instead of null)
+- [x] 8.8 UsersPanel: status bar feedback on add/edit/remove, dirty callback, auto-select new row
+- [x] 8.9 Build + all 8 tests pass
 
 ### Phase 9: Build & packaging
-- [ ] 9.1 Runnable JAR (fat jar with deps)
-- [ ] 9.2 Smoke test end-to-end
-- [ ] 9.3 Final cleanup & documentation
+- [x] 9.1 Fat JAR: maven-shade-plugin produces ska-configurator-1.0-SNAPSHOT.jar (3.5 MB, all deps bundled)
+- [x] 9.2 Smoke test: JAR launches GUI correctly (`java -jar target/ska-configurator-1.0-SNAPSHOT.jar`)
+- [x] 9.3 End-to-end integration test: XML read → CSV import → modify → save → re-read (EndToEndTest.java)
+- [x] 9.4 All 9 tests pass (1 AppTest + 5 CsvImporter + 2 XmlReaderWriter + 1 EndToEnd)
+- [x] 9.5 .gitignore updated (dependency-reduced-pom.xml, .idea/, *.iml)
+- [x] 9.6 Final clean build: BUILD SUCCESS

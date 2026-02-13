@@ -4,6 +4,7 @@ import com.pki.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class UserPickerDialog extends JDialog {
     private final DefaultListModel<String> listModel = new DefaultListModel<>();
     private final JList<String> userList = new JList<>(listModel);
     private final List<User> allUsers;
-    private List<String> selectedCns = null;
+    private List<String> selectedCns = new ArrayList<>();
 
     /**
      * @param owner parent frame
@@ -55,6 +56,11 @@ public class UserPickerDialog extends JDialog {
         getRootPane().setDefaultButton(okBtn);
         setSize(600, 400);
         setLocationRelativeTo(owner);
+
+        // Escape key closes the dialog
+        getRootPane().registerKeyboardAction(e -> doCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void doOk() {
@@ -71,14 +77,14 @@ public class UserPickerDialog extends JDialog {
     }
 
     private void doCancel() {
-        selectedCns = null;
+        selectedCns = new ArrayList<>();
         dispose();
     }
 
     /**
-     * @return list of selected CNs, or null if cancelled
+     * @return list of selected CNs, or empty list if cancelled
      */
     public List<String> getSelectedCns() {
-        return selectedCns;
+        return selectedCns != null ? selectedCns : new ArrayList<>();
     }
 }

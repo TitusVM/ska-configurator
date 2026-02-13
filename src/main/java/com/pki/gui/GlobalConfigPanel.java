@@ -4,6 +4,9 @@ import com.pki.model.SkaConfig;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Panel for editing the top-level SKA configuration attributes:
@@ -33,6 +36,14 @@ public class GlobalConfigPanel extends JPanel {
     private final JCheckBox modBlocked = new JCheckBox("Blocked on initialize");
 
     public GlobalConfigPanel() {
+        // Set tooltips
+        moduleNameField.setToolTipText("Module name identifier (e.g. EDOC-PP-CERT-01)");
+        orgStartValidity.setToolTipText("Format: YYYY-MM-DD  (e.g. 2025-01-01)");
+        orgEndValidity.setToolTipText("Format: YYYY-MM-DD  (e.g. 2030-12-31)");
+        plusStartValidity.setToolTipText("Format: YYYY-MM-DD");
+        plusEndValidity.setToolTipText("Format: YYYY-MM-DD");
+        modStartValidity.setToolTipText("Format: YYYY-MM-DD");
+        modEndValidity.setToolTipText("Format: YYYY-MM-DD");
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
@@ -152,5 +163,28 @@ public class GlobalConfigPanel extends JPanel {
         config.getSkaModify().setStartValidity(modStartValidity.getText().trim());
         config.getSkaModify().setEndValidity(modEndValidity.getText().trim());
         config.getSkaModify().setBlockedOnInitialize(modBlocked.isSelected());
+    }
+
+    /**
+     * Validate date fields and return any warnings.
+     */
+    public List<String> validateFields() {
+        List<String> warnings = new ArrayList<>();
+        Pattern datePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+
+        validateDate(orgStartValidity.getText().trim(), "Organization start validity", datePattern, warnings);
+        validateDate(orgEndValidity.getText().trim(), "Organization end validity", datePattern, warnings);
+        validateDate(plusStartValidity.getText().trim(), "SKA Plus start validity", datePattern, warnings);
+        validateDate(plusEndValidity.getText().trim(), "SKA Plus end validity", datePattern, warnings);
+        validateDate(modStartValidity.getText().trim(), "SKA Modify start validity", datePattern, warnings);
+        validateDate(modEndValidity.getText().trim(), "SKA Modify end validity", datePattern, warnings);
+
+        return warnings;
+    }
+
+    private void validateDate(String value, String label, Pattern pattern, List<String> warnings) {
+        if (!value.isEmpty() && !pattern.matcher(value).matches()) {
+            warnings.add(label + " is not in YYYY-MM-DD format: \"" + value + "\"");
+        }
     }
 }
