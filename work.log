@@ -39,17 +39,27 @@
 - [x] 3.5 CsvImporterTest: 5 tests pass (real CSV import, cert cleaning, multi-value parsing)
 
 ### Phase 4: XML read/write
-- [ ] 4.1 XML reader (load existing ska.xml into model)
-- [ ] 4.2 XML writer (serialize model to ska.xml)
+- [x] 4.1 SkaXmlReader: DOM parser, reads all sections/operations/boundaries/groups/users
+- [x] 4.2 SkaXmlWriter: DOM builder, indented output, CDATA for certs, curveName attr
+- [x] 4.3 Security: external entities disabled in reader
+- [x] 4.4 SkaXmlReaderWriterTest: 2 tests (full read + round-trip), all 8 tests pass
 
 ### Phase 5: Swing GUI — main frame & navigation
-- [ ] 5.1 Main frame, menu bar (New/Open/Save/Import CSV/Export XML)
-- [ ] 5.2 Global config panel (moduleName, version, validity dates, blockedOnInitialize)
+- [x] 5.1 MainFrame: menu bar (New/Open/Save/SaveAs/Import CSV/Exit), keyboard shortcuts
+- [x] 5.2 GlobalConfigPanel: moduleName, version, per-section key labels + validity + blockedOnInit
+- [x] 5.3 File ops: open XML, save XML, CSV import with cert-change detection + new-user prompt
+- [x] 5.4 Status bar, bidirectional model↔UI sync (loadFrom/saveTo)
+- [x] 5.5 App.java wired to MainFrame, build + smoke test OK
 
 ### Phase 6: Swing GUI — section panels
-- [ ] 6.1 Section tabs (organization, skaplus, skamodify, keys>proto)
-- [ ] 6.2 Operation editor (use/modify/block/unblock → boundaries → groups → members)
-- [ ] 6.3 Key label & EC parameters editor per section
+- [x] 6.1 EcParametersPanel: curve combo (predefined + free text) + PEM text area
+- [x] 6.2 OperationPanel: delay/timeLimit spinners, boundary list, group list, group detail
+       — group detail: name, quorum, members/keys radio, add/remove members, Apply button
+       — deep-copy boundaries for safe editing, confirmation on destructive ops
+- [x] 6.3 SectionPanel (org/skaplus/skamodify): EC params + 4 operation sub-tabs
+- [x] 6.4 KeysProtoPanel: same layout without key metadata
+- [x] 6.5 MainFrame wired: 5 tabs (Global Config, Organization, SKA Plus, SKA Modify, Keys Proto)
+- [x] 6.6 Build + smoke test OK
 
 ### Phase 7: Swing GUI — user management
 - [ ] 7.1 Users panel (table with cn, email, org, cert status)

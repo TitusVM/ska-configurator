@@ -1,6 +1,7 @@
 package com.pki;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.pki.gui.MainFrame;
 
 import javax.swing.*;
 
@@ -15,10 +16,7 @@ public class App {
         FlatLightLaf.setup();
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("SKA Configurator");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1024, 768);
-            frame.setLocationRelativeTo(null);
+            MainFrame frame = new MainFrame();
             frame.setVisible(true);
         });
     }
