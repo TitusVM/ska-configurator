@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<skaconfig moduleName="PROTO" version="1">
+    <organization blockedOnInitialize="false" keyLabel="PROTO_ORG_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
+        <ecParameters>-----BEGIN EC PARAMETERS-----
+            ...
+            -----END EC PARAMETERS-----
+        </ecParameters>
+        <operations>
+            <use delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHIJKL</membercn>
+                            <membercn>Person Thr MNOPQR</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </use>
+            <modify delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="SKA Modify">
+                        <keys>
+                            <keylabel>MODIFY_KEY_00000</keylabel>
+                        </keys>
+                    </group>
+                </boundary>
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </modify>
+            <block delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </block>
+            <unblock delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </unblock>
+        </operations>
+    </organization>
+    <skaplus blockedOnInitialize="false" keyLabel="PROTO_PLUS_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
+        <ecParameters>-----BEGIN EC PARAMETERS-----
+            ...
+            -----END EC PARAMETERS-----
+        </ecParameters>
+        <operations>
+            <use delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </use>
+            <modify delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="SKA Modify">
+                        <keys>
+                            <keylabel>MODIFY_KEY_00000</keylabel>
+                        </keys>
+                    </group>
+                </boundary>
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </modify>
+            <block delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </block>
+            <unblock delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </unblock>
+        </operations>
+    </skaplus>
+    <skamodify blockedOnInitialize="false" keyLabel="MODIFY_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
+        <ecParameters curveName="brainpoolXYZ">-----BEGIN EC PARAMETERS-----
+            ...
+        </ecParameters>
+        <operations>
+            <use delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="0" name="Unprotected"/>
+                </boundary>
+            </use>
+            <modify delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="0" name="Unprotected"/>
+                </boundary>
+            </modify>
+            <block delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="0" name="Unprotected"/>
+                </boundary>
+            </block>
+            <unblock delayMillis="0" timeLimitMillis="0">
+                <boundary>
+                    <group quorum="1" name="Owners">
+                        <members>
+                            <membercn>Person One ABCDEF</membercn>
+                            <membercn>Person Two GHJKLM</membercn>
+                            <membercn>Person Thr NOPQRS</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Security Officers">
+                        <members>
+                            <membercn>Person Fou STUVWX</membercn>
+                            <membercn>Person Fiv YZ0123</membercn>
+                            <membercn>Person Six 456789</membercn>
+                        </members>
+                    </group>
+                    <group quorum="1" name="Operators">
+                        <members>
+                            <membercn>Person Sev 876543</membercn>
+                            <membercn>Person Eig 210ZYX</membercn>
+                            <membercn>Person Nin WVUTSR</membercn>
+                        </members>
+                    </group>
+                </boundary>
+            </unblock>
+        </operations>
+    </skamodify>
+    <keys>
+        <proto>
+            <operations>
+                <use delayMillis="0" timeLimitMillis="0">
+                    <boundary>
+                        <group quorum="1" name="Owners">
+                            <members>
+                                <membercn>Person One ABCDEF</membercn>
+                                <membercn>Person Two GHJKLM</membercn>
+                                <membercn>Person Thr NOPQRS</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Security Officers">
+                            <members>
+                                <membercn>Person Fou STUVWX</membercn>
+                                <membercn>Person Fiv YZ0123</membercn>
+                                <membercn>Person Six 456789</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Operators">
+                            <members>
+                                <membercn>Person Sev 876543</membercn>
+                                <membercn>Person Eig 210ZYX</membercn>
+                                <membercn>Person Nin WVUTSR</membercn>
+                            </members>
+                        </group>
+                    </boundary>
+                </use>
+                <modify delayMillis="0" timeLimitMillis="0">
+                    <boundary>
+                        <group quorum="1" name="SKA Modify">
+                            <keys>
+                                <keylabel>MODIFY_KEY_00000</keylabel>
+                            </keys>
+                        </group>
+                    </boundary>
+                    <boundary>
+                        <group quorum="1" name="Owners">
+                            <members>
+                                <membercn>Person One ABCDEF</membercn>
+                                <membercn>Person Two GHJKLM</membercn>
+                                <membercn>Person Thr NOPQRS</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Security Officers">
+                            <members>
+                                <membercn>Person Fou STUVWX</membercn>
+                                <membercn>Person Fiv YZ0123</membercn>
+                                <membercn>Person Six 456789</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Operators">
+                            <members>
+                                <membercn>Person Sev 876543</membercn>
+                                <membercn>Person Eig 210ZYX</membercn>
+                                <membercn>Person Nin WVUTSR</membercn>
+                            </members>
+                        </group>
+                    </boundary>
+                </modify>
+                <block delayMillis="0" timeLimitMillis="0">
+                    <boundary>
+                        <group quorum="1" name="Owners">
+                            <members>
+                                <membercn>Person One ABCDEF</membercn>
+                                <membercn>Person Two GHJKLM</membercn>
+                                <membercn>Person Thr NOPQRS</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Security Officers">
+                            <members>
+                                <membercn>Person Fou STUVWX</membercn>
+                                <membercn>Person Fiv YZ0123</membercn>
+                                <membercn>Person Six 456789</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Operators">
+                            <members>
+                                <membercn>Person Sev 876543</membercn>
+                                <membercn>Person Eig 210ZYX</membercn>
+                                <membercn>Person Nin WVUTSR</membercn>
+                            </members>
+                        </group>
+                    </boundary>
+                </block>
+                <unblock delayMillis="0" timeLimitMillis="0">
+                    <boundary>
+                        <group quorum="1" name="Owners">
+                            <members>
+                                <membercn>Person One ABCDEF</membercn>
+                                <membercn>Person Two GHJKLM</membercn>
+                                <membercn>Person Thr NOPQRS</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Security Officers">
+                            <members>
+                                <membercn>Person Fou STUVWX</membercn>
+                                <membercn>Person Fiv YZ0123</membercn>
+                                <membercn>Person Six 456789</membercn>
+                            </members>
+                        </group>
+                        <group quorum="1" name="Operators">
+                            <members>
+                                <membercn>Person Sev 876543</membercn>
+                                <membercn>Person Eig 210ZYX</membercn>
+                                <membercn>Person Nin WVUTSR</membercn>
+                            </members>
+                        </group>
+                    </boundary>
+                </unblock>
+            </operations>
+            <ecParameters>-----BEGIN EC PARAMETERS-----
+                ...
+                -----END EC PARAMETERS-----
+            </ecParameters>
+        </proto>
+    </keys>
+    <users>
+        <user email="person.one@admin.ch" userId="12345678" cn="Person One ABCDEF" name="Person One" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.two@admin.ch" userId="87654321" cn="Person Two GHJKLM" name="Person Two" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.thr@admin.ch" userId="43215678" cn="Person Thr NOPQRS" name="Person Thr" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.fou@admin.ch" userId="23456789" cn="Person Fou STUVWX" name="Person Fou" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.fiv@admin.ch" userId="34567890" cn="Person Fiv YZ0123" name="Person Fiv" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.six@admin.ch" userId="45678901" cn="Person Six 456789" name="Person Six" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.sev@admin.ch" userId="56789012" cn="Person Sev 876543" name="Person Sev" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.eig@admin.ch" userId="67890123" cn="Person Eig 210ZYX" name="Person Eig" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+        <user email="person.nin@admin.ch" userId="78901234" cn="Person Nin WVUTSR" name="Person Nin" organisation="fedpol">
+            <cert>
+                <![CDATA[
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+                ]]>
+            </cert>
+        </user>
+    </users>
+</skaconfig>

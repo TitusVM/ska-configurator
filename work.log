@@ -1,0 +1,62 @@
+# SKA Configurator - Work Log
+
+## Status: PLANNING COMPLETE — READY TO IMPLEMENT
+
+### Decisions (from user, 2026-02-13)
+- Java 21, Swing GUI
+- User-to-group: CSV import + manual GUI override
+- Load existing SKA XML files + create new
+- skamodify protection levels: configurable per operation
+- Module name & key labels: free-text user input
+- EC params: predefined curve list + raw PEM paste
+- Cert change: on CSV import, diff vs loaded SKA, prompt to update stale certs
+
+### 2026-02-13 - Initial Analysis
+- Read README.md, example/ska.xml, exports/export.csv, pom.xml, App.java
+- XML structure: skaconfig > {organization, skaplus, skamodify, keys>proto, users}
+- Operations: use, modify, block, unblock — each with boundaries>groups>members
+- CSV: 32+ cols (cn, cert, Email, Organisation, userId, role cols like Org Owner/SecOff/Op)
+
+---
+## IMPLEMENTATION PLAN (step by step)
+
+### Phase 1: Project setup
+- [ ] 1.1 Update pom.xml (Java 21, add JAXB/FlatLaf/OpenCSV deps, maven-jar plugin with mainClass)
+- [ ] 1.2 Clean up App.java, set up package structure
+
+### Phase 2: Data model
+- [ ] 2.1 Core model: SkaConfig, Section (org/skaplus/skamodify/keys), Operation, Boundary, Group, Member, User
+- [ ] 2.2 EC parameters model (curveName, PEM text)
+
+### Phase 3: CSV import
+- [ ] 3.1 CSV parser (map Jira export columns to User objects)
+- [ ] 3.2 Extract cn, cert, email, organisation, userId, role assignments
+
+### Phase 4: XML read/write
+- [ ] 4.1 XML reader (load existing ska.xml into model)
+- [ ] 4.2 XML writer (serialize model to ska.xml)
+
+### Phase 5: Swing GUI — main frame & navigation
+- [ ] 5.1 Main frame, menu bar (New/Open/Save/Import CSV/Export XML)
+- [ ] 5.2 Global config panel (moduleName, version, validity dates, blockedOnInitialize)
+
+### Phase 6: Swing GUI — section panels
+- [ ] 6.1 Section tabs (organization, skaplus, skamodify, keys>proto)
+- [ ] 6.2 Operation editor (use/modify/block/unblock → boundaries → groups → members)
+- [ ] 6.3 Key label & EC parameters editor per section
+
+### Phase 7: Swing GUI — user management
+- [ ] 7.1 Users panel (table with cn, email, org, cert status)
+- [ ] 7.2 CSV import flow + cert change detection & prompt
+- [ ] 7.3 Manual user add/edit/remove
+- [ ] 7.4 Assign users to groups (drag or combo)
+
+### Phase 8: Validation & polish
+- [ ] 8.1 Input validation (XML safety, cert parsing, required fields)
+- [ ] 8.2 Confirmation dialogs for destructive ops
+- [ ] 8.3 Error messages & status bar feedback
+
+### Phase 9: Build & packaging
+- [ ] 9.1 Runnable JAR (fat jar with deps)
+- [ ] 9.2 Smoke test end-to-end
+- [ ] 9.3 Final cleanup & documentation
