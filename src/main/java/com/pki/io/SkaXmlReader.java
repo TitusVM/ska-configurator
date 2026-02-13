@@ -53,12 +53,15 @@ public class SkaXmlReader {
             config.setSkaModify(readSection(modEl));
         }
 
-        // Keys > Proto
+        // Keys > child (e.g. "proto", but can be any name)
         Element keysEl = firstChild(root, "keys");
         if (keysEl != null) {
-            Element protoEl = firstChild(keysEl, "proto");
-            if (protoEl != null) {
-                config.setKeysProto(readKeysProto(protoEl));
+            // Read the first element child of <keys>, whatever its tag name
+            Element childEl = firstElementChild(keysEl);
+            if (childEl != null) {
+                KeysProto kp = readKeysProto(childEl);
+                kp.setChildName(childEl.getTagName());
+                config.setKeysProto(kp);
             }
         }
 
@@ -221,6 +224,17 @@ public class SkaXmlReader {
         NodeList nodes = parent.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             if (nodes.item(i) instanceof Element el && tagName.equals(el.getTagName())) {
+                return el;
+            }
+        }
+        return null;
+    }
+
+    /** Returns the first child element regardless of tag name. */
+    private Element firstElementChild(Element parent) {
+        NodeList nodes = parent.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if (nodes.item(i) instanceof Element el) {
                 return el;
             }
         }

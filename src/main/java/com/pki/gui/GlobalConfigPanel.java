@@ -3,9 +3,12 @@ package com.pki.gui;
 import com.pki.model.SkaConfig;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -16,6 +19,7 @@ public class GlobalConfigPanel extends JPanel {
 
     private final JTextField moduleNameField = new JTextField(20);
     private final JSpinner versionSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 999, 1));
+    private final JTextField keysChildNameField = new JTextField(12);
 
     // Organization section
     private final JTextField orgKeyLabel = new JTextField(25);
@@ -35,10 +39,29 @@ public class GlobalConfigPanel extends JPanel {
     private final JTextField modEndValidity = new JTextField(12);
     private final JCheckBox modBlocked = new JCheckBox("Blocked on initialize");
 
+    private Consumer<String> keysChildNameChangeListener;
+
+    public void setKeysChildNameChangeListener(Consumer<String> listener) {
+        this.keysChildNameChangeListener = listener;
+    }
+
     public GlobalConfigPanel() {
         // Set tooltips
         moduleNameField.setToolTipText("Module name identifier (e.g. EDOC-PP-CERT-01)");
-        orgStartValidity.setToolTipText("Format: YYYY-MM-DD  (e.g. 2025-01-01)");
+        keysChildNameField.setToolTipText("Element name inside <keys> (e.g. proto, operational)");
+
+        // Fire listener on every keystroke in keysChildNameField
+        keysChildNameField.getDocument().addDocumentListener(new DocumentListener() {
+            private void fire() {
+                if (keysChildNameChangeListener != null) {
+                    keysChildNameChangeListener.accept(keysChildNameField.getText().trim());
+                }
+            }
+            @Override public void insertUpdate(DocumentEvent e) { fire(); }
+            @Override public void removeUpdate(DocumentEvent e) { fire(); }
+            @Override public void changedUpdate(DocumentEvent e) { fire(); }
+        });
+        orgStartValidity.setToolTipText("Format: YYYY-MM-DD  (e.g. 2025-01-01)");;
         orgEndValidity.setToolTipText("Format: YYYY-MM-DD  (e.g. 2030-12-31)");
         plusStartValidity.setToolTipText("Format: YYYY-MM-DD");
         plusEndValidity.setToolTipText("Format: YYYY-MM-DD");
@@ -83,6 +106,9 @@ public class GlobalConfigPanel extends JPanel {
         panel.add(Box.createHorizontalStrut(16));
         panel.add(new JLabel("Version:"));
         panel.add(versionSpinner);
+        panel.add(Box.createHorizontalStrut(16));
+        panel.add(new JLabel("Keys child name:"));
+        panel.add(keysChildNameField);
         return panel;
     }
 
@@ -122,6 +148,7 @@ public class GlobalConfigPanel extends JPanel {
     public void loadFrom(SkaConfig config) {
         moduleNameField.setText(config.getModuleName());
         versionSpinner.setValue(config.getVersion());
+        keysChildNameField.setText(config.getKeysProto().getChildName());
 
         // Organization
         orgKeyLabel.setText(config.getOrganization().getKeyLabel());
@@ -145,6 +172,10 @@ public class GlobalConfigPanel extends JPanel {
     public void saveTo(SkaConfig config) {
         config.setModuleName(moduleNameField.getText().trim());
         config.setVersion((int) versionSpinner.getValue());
+        String childName = keysChildNameField.getText().trim();
+        if (!childName.isEmpty()) {
+            config.getKeysProto().setChildName(childName);
+        }
 
         // Organization
         config.getOrganization().setKeyLabel(orgKeyLabel.getText().trim());

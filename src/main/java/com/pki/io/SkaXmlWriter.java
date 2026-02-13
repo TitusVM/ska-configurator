@@ -78,13 +78,15 @@ public class SkaXmlWriter {
     }
 
     private void writeKeysProto(Document doc, Element parent, KeysProto keysProto) {
+        String childTag = keysProto.getChildName();
+        if (childTag == null || childTag.isEmpty()) return; // no keys block if no child name set
         Element keysEl = doc.createElement("keys");
         parent.appendChild(keysEl);
-        Element protoEl = doc.createElement("proto");
-        keysEl.appendChild(protoEl);
+        Element childEl = doc.createElement(childTag);
+        keysEl.appendChild(childEl);
 
-        writeOperations(doc, protoEl, keysProto.getOperations());
-        writeEcParameters(doc, protoEl, keysProto.getEcParameters());
+        writeOperations(doc, childEl, keysProto.getOperations());
+        writeEcParameters(doc, childEl, keysProto.getEcParameters());
     }
 
     // --- EC Parameters ---

@@ -1,6 +1,6 @@
 target/
 exports/
-examples/
+example/
 dependency-reduced-pom.xml
 *.iml
 .idea/

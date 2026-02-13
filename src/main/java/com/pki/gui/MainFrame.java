@@ -73,8 +73,16 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Organization", organizationPanel);
         tabbedPane.addTab("SKA Plus", skaPlusPanel);
         tabbedPane.addTab("SKA Modify", skaModifyPanel);
-        tabbedPane.addTab("Keys (Proto)", keysProtoPanel);
+        tabbedPane.addTab("Keys", keysProtoPanel);
         tabbedPane.addTab("Users", usersPanel);
+
+        // Update Keys tab label dynamically when user types in the keys child name field
+        globalConfigPanel.setKeysChildNameChangeListener(name -> {
+            int idx = tabbedPane.indexOfComponent(keysProtoPanel);
+            if (idx >= 0) {
+                tabbedPane.setTitleAt(idx, name.isEmpty() ? "Keys" : "Keys (" + name + ")");
+            }
+        });
         add(tabbedPane, BorderLayout.CENTER);
 
         // Status bar
@@ -362,6 +370,13 @@ public class MainFrame extends JFrame {
         skaModifyPanel.loadFrom(config.getSkaModify());
         keysProtoPanel.loadFrom(config.getKeysProto());
         usersPanel.loadFrom(config.getUsers());
+        // Update the Keys tab label to reflect the actual child name
+        String childName = config.getKeysProto().getChildName();
+        int keysTabIndex = tabbedPane.indexOfComponent(keysProtoPanel);
+        if (keysTabIndex >= 0) {
+            String label = childName.isEmpty() ? "Keys" : "Keys (" + childName + ")";
+            tabbedPane.setTitleAt(keysTabIndex, label);
+        }
         updateTitle();
     }
 
