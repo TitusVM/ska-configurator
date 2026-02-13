@@ -26,12 +26,17 @@
 - [x] 1.3 Build verified (mvn clean package), JAR runs OK
 
 ### Phase 2: Data model
-- [ ] 2.1 Core model: SkaConfig, Section (org/skaplus/skamodify/keys), Operation, Boundary, Group, Member, User
-- [ ] 2.2 EC parameters model (curveName, PEM text)
+- [x] 2.1 SkaConfig (root), SkaSection (org/skaplus/skamodify), KeysProto
+- [x] 2.2 Operations, Operation, Boundary, Group
+- [x] 2.3 User, EcParameters
+- [x] 2.4 Build verified — all 9 model classes compile
 
 ### Phase 3: CSV import
-- [ ] 3.1 CSV parser (map Jira export columns to User objects)
-- [ ] 3.2 Extract cn, cert, email, organisation, userId, role assignments
+- [x] 3.1 Added role fields (orgOwnerOf/orgSecOffOf/orgOpOf) to User model
+- [x] 3.2 CsvImporter: OpenCSV RFC4180 parser, header-based column mapping
+- [x] 3.3 Handles: multiline PEM certs, &nbsp; cleanup, cert in wrong column, || multi-values
+- [x] 3.4 Deduplication by CN (merges data, keeps latest cert, unions roles)
+- [x] 3.5 CsvImporterTest: 5 tests pass (real CSV import, cert cleaning, multi-value parsing)
 
 ### Phase 4: XML read/write
 - [ ] 4.1 XML reader (load existing ska.xml into model)
