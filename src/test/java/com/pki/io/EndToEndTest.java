@@ -81,9 +81,11 @@ public class EndToEndTest {
         assertTrue(org.getEcParameters().getPemText().contains("BEGIN EC PARAMETERS"));
         assertEquals(3, org.getOperations().getUse().getBoundaries().get(0).getGroups().size());
 
-        // Verify user certificates survived
-        User firstUser = reloaded.getUsers().get(0);
-        assertEquals("Person One ABCDEF", firstUser.getCn());
+        // Verify user certificates survived (find by CN since list is sorted)
+        User firstUser = reloaded.getUsers().stream()
+                .filter(u -> u.getCn().equals("Person One ABCDEF"))
+                .findFirst().orElse(null);
+        assertNotNull("Person One ABCDEF should exist", firstUser);
         assertTrue(firstUser.getCertificate().contains("BEGIN CERTIFICATE"));
     }
 }

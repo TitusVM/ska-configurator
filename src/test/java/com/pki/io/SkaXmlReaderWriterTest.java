@@ -119,14 +119,20 @@ public class SkaXmlReaderWriterTest {
         for (int i = 0; i < origGroups.size(); i++) {
             assertEquals(origGroups.get(i).getName(), rtGroups.get(i).getName());
             assertEquals(origGroups.get(i).getQuorum(), rtGroups.get(i).getQuorum());
-            assertEquals(origGroups.get(i).getMemberCns(), rtGroups.get(i).getMemberCns());
+            List<String> origMembers = new java.util.ArrayList<>(origGroups.get(i).getMemberCns());
+            List<String> rtMembers = new java.util.ArrayList<>(rtGroups.get(i).getMemberCns());
+            java.util.Collections.sort(origMembers);
+            java.util.Collections.sort(rtMembers);
+            assertEquals(origMembers, rtMembers);
         }
 
         // Check user certificates survived CDATA round-trip
-        for (int i = 0; i < config.getUsers().size(); i++) {
-            User origUser = config.getUsers().get(i);
-            User rtUser = roundTripped.getUsers().get(i);
-            assertEquals(origUser.getCn(), rtUser.getCn());
+        // Users may be in a different order after round-trip (sorted on write)
+        for (User origUser : config.getUsers()) {
+            User rtUser = roundTripped.getUsers().stream()
+                    .filter(u -> u.getCn().equals(origUser.getCn()))
+                    .findFirst().orElse(null);
+            assertNotNull("User " + origUser.getCn() + " should survive round-trip", rtUser);
             assertEquals(origUser.getEmail(), rtUser.getEmail());
             assertEquals(origUser.getCertificate().trim(), rtUser.getCertificate().trim());
         }

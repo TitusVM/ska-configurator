@@ -1,6 +1,6 @@
 # SKA Configurator - Work Log
 
-## Status: COMPLETE
+## Status: Phase 10 — Multi-SKA Folder Mode
 
 ### Decisions (from user, 2026-02-13)
 - Java 21, Swing GUI
@@ -88,3 +88,72 @@
 - [x] 9.4 All 9 tests pass (1 AppTest + 5 CsvImporter + 2 XmlReaderWriter + 1 EndToEnd)
 - [x] 9.5 .gitignore updated (dependency-reduced-pom.xml, .idea/, *.iml)
 - [x] 9.6 Final clean build: BUILD SUCCESS
+
+### Post-Phase improvements (2026-02-13)
+- [x] README.md rewritten with full documentation
+- [x] Git history cleanup: removed example/ska_test.xml containing personal data (filter-branch + gc)
+- [x] Keys child name: dynamic <keys> child element name (was hardcoded "proto")
+      — KeysProto.childName field, reader auto-detects tag, writer uses stored name
+      — GlobalConfigPanel: "Keys child name" field, MainFrame: dynamic tab label "Keys (xxx)"
+      — Default empty, read from loaded SKA or filled by user
+- [x] XML header: added xmlns:xsi + xsi:noNamespaceSchemaLocation support
+      — SkaConfig.xsiNoNamespaceSchemaLocation field, reader reads it (namespace-aware), writer outputs it
+      — GlobalConfigPanel: "XSD schema" field
+      — Removed standalone="yes" from XML output (doc.setXmlStandalone(true))
+- [x] Prod/Integration toggle: JRadioButton toolbar for environment selection
+      — User model: added userIdIntegration field
+      — CsvImporter: reads "userID Integration" column
+      — SkaXmlWriter: writes correct userId based on environment flag
+      — UsersPanel: dynamic column header "UserID (Prod)" / "UserID (Int)"
+      — UserEditDialog: shows both "User ID (Prod)" and "User ID (Integration)" fields
+- [x] Version bump prompt: on save, prompt to increase version if unchanged since load
+      — loadedVersion tracked on open, not updated on save (prevents re-prompt after bump)
+- [x] Round-trip test: assertion verifying no standalone attribute in XML output
+- [x] All 9 tests pass after all improvements
+
+---
+### Phase 10: Multi-SKA folder mode (2026-02-16)
+
+#### Design decisions
+- Open a folder of *.xml SKA files, edit one at a time via a selector
+- Single master user pool (union of all users across all SKAs, keyed by CN)
+- Shared User instances: cert/email/userId edits propagate to all SKAs referencing that user
+- Each SKA keeps its own user subset (which users are included)
+- Single-file open still works (workspace of 1)
+- Prod/Integration toggle is global (applies to all SKAs)
+- "Pick from Users" in operation panels picks from per-SKA user list (not master pool)
+- Master pool merge: on conflict (same CN, different cert), keep last-loaded; CSV import overrides all
+- Removing from master pool warns about affected SKAs; removing from per-SKA only un-links
+
+#### Implementation plan
+- [x] 10.1 Model layer: SkaWorkspace class (List<SkaConfigEntry>, master user pool)
+      — SkaConfigEntry: SkaConfig + File sourceFile + int loadedVersion + boolean dirty
+- [x] 10.2 File operations: "Open Folder…" menu item, load all *.xml, build master pool
+      — Merge users by CN into shared instances, replace per-SKA lists with shared refs
+      — "Save" saves current SKA; "Save All" (Ctrl+Shift+S) saves all dirty SKAs
+- [x] 10.3 SKA selector UI: JComboBox in toolbar showing "moduleName (filename)"
+      — Switching: collectUIIntoModel() for current, loadModelIntoUI() for new selection
+      — Dirty indicator (asterisk) in combo items
+      — Visible only when 2+ entries (folder mode), hidden for single-file mode
+      — skaSelectorUpdating guard prevents listener re-entry during refresh
+- [x] 10.4 Users tab: master pool table + per-SKA membership
+      — Single table with "In SKA" checkbox column (when in folder mode)
+      — CSV import updates master pool, propagates to all SKAs
+      — Add/remove from master pool vs. include/exclude from current SKA
+      — loadFromWorkspace()/clearWorkspaceMode() switch table between modes
+      — collectUIIntoModel() calls syncEntryUsersFromPool() to persist checked CNs
+      — Remove button offers "Remove from Pool" vs "Exclude from SKA" in folder mode
+- [x] 10.5 Save All & per-SKA dirty tracking
+      — Title bar: "SKA Configurator — folder — currentSka.xml [MODULE] *" (done in 10.2)
+      — Exit: check all SKAs for unsaved changes, lists dirty files by name
+      — confirmDiscardChanges: lists dirty files in folder mode
+      — doSaveAll: syncs ALL entries' user lists from master pool before writing
+      — doExit: folder-aware prompt listing N dirty file(s) with bullet list
+- [x] 10.6 Tests & build
+      — WorkspaceTest: 5 tests covering folder mode, shared users, merge, dirty tracking
+        • testFolderModeSharedUsers: 2 XMLs → workspace → modify shared cert → sync+save → re-read verify
+        • testEntryLabelsAndDirty: display labels, dirty indicator
+        • testWorkspaceEdgeCases: empty workspace, add/remove, clear
+        • testActiveIndexSwitching: multi-entry index management on add/remove
+        • testMasterPoolMerge: blank-field fill-in, no-overwrite, union by CN
+      — All 14 tests pass (9 original + 5 new), clean build, fat JAR OK

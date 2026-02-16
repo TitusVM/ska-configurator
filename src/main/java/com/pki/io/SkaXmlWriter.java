@@ -148,11 +148,13 @@ public class SkaXmlWriter {
         gEl.setAttribute("name", group.getName());
         parent.appendChild(gEl);
 
-        // Members
+        // Members (sorted alphabetically)
         if (!group.getMemberCns().isEmpty()) {
             Element membersEl = doc.createElement("members");
             gEl.appendChild(membersEl);
-            for (String cn : group.getMemberCns()) {
+            java.util.List<String> sortedCns = new java.util.ArrayList<>(group.getMemberCns());
+            java.util.Collections.sort(sortedCns);
+            for (String cn : sortedCns) {
                 Element mcn = doc.createElement("membercn");
                 mcn.setTextContent(cn);
                 membersEl.appendChild(mcn);
@@ -177,7 +179,9 @@ public class SkaXmlWriter {
         Element usersEl = doc.createElement("users");
         parent.appendChild(usersEl);
 
-        for (User user : users) {
+        java.util.List<User> sorted = new java.util.ArrayList<>(users);
+        sorted.sort(java.util.Comparator.comparing(User::getCn));
+        for (User user : sorted) {
             writeUser(doc, usersEl, user, useIntegration);
         }
     }
