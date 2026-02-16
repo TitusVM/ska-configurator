@@ -23,6 +23,7 @@ public class MainFrame extends JFrame {
     private SkaConfig config;
     private File currentFile;
     private boolean dirty = false;
+    private int loadedVersion = -1;  // version at load time, -1 = new file
 
     private final GlobalConfigPanel globalConfigPanel;
     private final SectionPanel organizationPanel;
@@ -32,6 +33,8 @@ public class MainFrame extends JFrame {
     private final UsersPanel usersPanel;
     private final JTabbedPane tabbedPane;
     private final JLabel statusBar;
+    private final JRadioButton prodRadio;
+    private final JRadioButton integrationRadio;
 
     public MainFrame() {
         super("SKA Configurator");
@@ -50,6 +53,31 @@ public class MainFrame extends JFrame {
 
         // Menu bar
         setJMenuBar(createMenuBar());
+
+        // Environment toggle toolbar
+        JToolBar envToolBar = new JToolBar();
+        envToolBar.setFloatable(false);
+        envToolBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Separator.foreground")),
+                BorderFactory.createEmptyBorder(4, 12, 4, 12)));
+        envToolBar.add(new JLabel("Environment:  "));
+        prodRadio = new JRadioButton("Prod", true);
+        integrationRadio = new JRadioButton("Integration");
+        prodRadio.setFont(prodRadio.getFont().deriveFont(Font.BOLD));
+        integrationRadio.setFont(integrationRadio.getFont().deriveFont(Font.BOLD));
+        ButtonGroup envGroup = new ButtonGroup();
+        envGroup.add(prodRadio);
+        envGroup.add(integrationRadio);
+        prodRadio.addActionListener(e -> onEnvironmentChanged());
+        integrationRadio.addActionListener(e -> onEnvironmentChanged());
+        envToolBar.add(prodRadio);
+        envToolBar.add(Box.createHorizontalStrut(8));
+        envToolBar.add(integrationRadio);
+        envToolBar.add(Box.createHorizontalStrut(24));
+        JLabel envHint = new JLabel("(affects which userID column is used from CSV / written to XML)");
+        envHint.setForeground(UIManager.getColor("Label.disabledForeground"));
+        envToolBar.add(envHint);
+        add(envToolBar, BorderLayout.NORTH);
 
         // Tabbed pane
         tabbedPane = new JTabbedPane();
@@ -103,6 +131,17 @@ public class MainFrame extends JFrame {
 
     public void setStatus(String message) {
         statusBar.setText("  " + message);
+    }
+
+    // --- Environment toggle ---
+
+    private void onEnvironmentChanged() {
+        boolean isIntegration = integrationRadio.isSelected();
+        config.setIntegrationEnvironment(isIntegration);
+        usersPanel.setIntegrationEnvironment(isIntegration);
+        String env = isIntegration ? "Integration" : "Prod";
+        setStatus("Environment switched to " + env + " — userID column updated");
+        markDirty();
     }
 
     // --- Menu bar ---
@@ -159,6 +198,7 @@ public class MainFrame extends JFrame {
         this.config = new SkaConfig();
         this.currentFile = null;
         this.dirty = false;
+        this.loadedVersion = -1;
         loadModelIntoUI();
         setStatus("New configuration created");
     }
@@ -177,6 +217,7 @@ public class MainFrame extends JFrame {
             this.config = reader.read(file);
             this.currentFile = file;
             this.dirty = false;
+            this.loadedVersion = config.getVersion();
             loadModelIntoUI();
             setStatus("Loaded: " + file.getName() + "  (" + config.getUsers().size() + " users)");
         } catch (Exception ex) {
@@ -221,6 +262,21 @@ public class MainFrame extends JFrame {
     private void saveToFile(File file) {
         try {
             collectUIIntoModel();
+
+            // Prompt to increase version if unchanged since load
+            if (loadedVersion >= 0 && config.getVersion() <= loadedVersion) {
+                int ans = JOptionPane.showConfirmDialog(this,
+                        "The version number (" + config.getVersion()
+                                + ") has not been increased since loading the file.\n\n"
+                                + "Increase version to " + (loadedVersion + 1) + "?",
+                        "Version Number", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (ans == JOptionPane.CANCEL_OPTION || ans == JOptionPane.CLOSED_OPTION) return;
+                if (ans == JOptionPane.YES_OPTION) {
+                    config.setVersion(loadedVersion + 1);
+                    loadModelIntoUI(); // refresh spinner
+                }
+            }
 
             // Pre-save validation warnings
             String warnings = buildSaveWarnings();
@@ -326,6 +382,7 @@ public class MainFrame extends JFrame {
                         if (!imp.getEmail().isEmpty()) existing.setEmail(imp.getEmail());
                         if (!imp.getOrganisation().isEmpty()) existing.setOrganisation(imp.getOrganisation());
                         if (!imp.getUserId().isEmpty()) existing.setUserId(imp.getUserId());
+                        if (!imp.getUserIdIntegration().isEmpty()) existing.setUserIdIntegration(imp.getUserIdIntegration());
                         existing.getOrgOwnerOf().addAll(imp.getOrgOwnerOf());
                         existing.getOrgSecOffOf().addAll(imp.getOrgSecOffOf());
                         existing.getOrgOpOf().addAll(imp.getOrgOpOf());
@@ -370,6 +427,11 @@ public class MainFrame extends JFrame {
         skaModifyPanel.loadFrom(config.getSkaModify());
         keysProtoPanel.loadFrom(config.getKeysProto());
         usersPanel.loadFrom(config.getUsers());
+        // Sync environment toggle
+        boolean isIntegration = config.isIntegrationEnvironment();
+        prodRadio.setSelected(!isIntegration);
+        integrationRadio.setSelected(isIntegration);
+        usersPanel.setIntegrationEnvironment(isIntegration);
         // Update the Keys tab label to reflect the actual child name
         String childName = config.getKeysProto().getChildName();
         int keysTabIndex = tabbedPane.indexOfComponent(keysProtoPanel);
@@ -473,6 +535,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel.saveTo(config.getSkaPlus());
         skaModifyPanel.saveTo(config.getSkaModify());
         keysProtoPanel.saveTo(config.getKeysProto());
+        config.setIntegrationEnvironment(integrationRadio.isSelected());
         // UsersPanel edits the list in-place, no explicit saveTo needed
     }
 

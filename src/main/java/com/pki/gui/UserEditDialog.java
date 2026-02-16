@@ -20,6 +20,7 @@ public class UserEditDialog extends JDialog {
     private final JTextField emailField = new JTextField(30);
     private final JTextField organisationField = new JTextField(20);
     private final JTextField userIdField = new JTextField(15);
+    private final JTextField userIdIntField = new JTextField(15);
     private final JTextArea certArea = new JTextArea(12, 60);
 
     private User result = null;
@@ -49,7 +50,8 @@ public class UserEditDialog extends JDialog {
         addFormRow(form, gbc, row++, "Name:", nameField);
         addFormRow(form, gbc, row++, "Email:", emailField);
         addFormRow(form, gbc, row++, "Organisation:", organisationField);
-        addFormRow(form, gbc, row++, "User ID:", userIdField);
+        addFormRow(form, gbc, row++, "User ID (Prod):", userIdField);
+        addFormRow(form, gbc, row++, "User ID (Integration):", userIdIntField);
 
         // Certificate label
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
@@ -83,6 +85,7 @@ public class UserEditDialog extends JDialog {
             emailField.setText(user.getEmail());
             organisationField.setText(user.getOrganisation());
             userIdField.setText(user.getUserId());
+            userIdIntField.setText(user.getUserIdIntegration());
             certArea.setText(user.getCertificate());
             certArea.setCaretPosition(0);
         }
@@ -163,6 +166,7 @@ public class UserEditDialog extends JDialog {
             editing.setEmail(emailField.getText().trim());
             editing.setOrganisation(organisationField.getText().trim());
             editing.setUserId(userIdField.getText().trim());
+            editing.setUserIdIntegration(userIdIntField.getText().trim());
             editing.setCertificate(certArea.getText().trim());
             result = editing;
         } else {
@@ -173,6 +177,7 @@ public class UserEditDialog extends JDialog {
             u.setEmail(emailField.getText().trim());
             u.setOrganisation(organisationField.getText().trim());
             u.setUserId(userIdField.getText().trim());
+            u.setUserIdIntegration(userIdIntField.getText().trim());
             u.setCertificate(certArea.getText().trim());
             result = u;
         }

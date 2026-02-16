@@ -19,6 +19,7 @@ public class UsersPanel extends JPanel {
     private final UserTableModel tableModel;
     private final JTable table;
     private List<User> users = new ArrayList<>();
+    private boolean integrationEnvironment = false;
     private Consumer<String> statusCallback;
     private Runnable dirtyCallback;
 
@@ -42,6 +43,18 @@ public class UsersPanel extends JPanel {
 
     private void markDirty() {
         if (dirtyCallback != null) dirtyCallback.run();
+    }
+
+    /**
+     * Switch the environment toggle. Updates the UserID column header and data.
+     */
+    public void setIntegrationEnvironment(boolean integration) {
+        this.integrationEnvironment = integration;
+        // Update column header
+        table.getColumnModel().getColumn(4).setHeaderValue(
+                integration ? "UserID (Int)" : "UserID (Prod)");
+        table.getTableHeader().repaint();
+        tableModel.fireTableDataChanged();
     }
 
     public UsersPanel() {
@@ -181,11 +194,14 @@ public class UsersPanel extends JPanel {
 
     private class UserTableModel extends AbstractTableModel {
 
-        private final String[] COLUMNS = {"CN", "Name", "Email", "Organisation", "UserID", "Cert"};
+        private final String[] COLUMNS = {"CN", "Name", "Email", "Organisation", "UserID (Prod)", "Cert"};
 
         @Override public int getRowCount() { return users.size(); }
         @Override public int getColumnCount() { return COLUMNS.length; }
-        @Override public String getColumnName(int col) { return COLUMNS[col]; }
+        @Override public String getColumnName(int col) {
+            if (col == 4) return integrationEnvironment ? "UserID (Int)" : "UserID (Prod)";
+            return COLUMNS[col];
+        }
 
         @Override
         public Object getValueAt(int row, int col) {
@@ -195,7 +211,7 @@ public class UsersPanel extends JPanel {
                 case 1 -> u.getName();
                 case 2 -> u.getEmail();
                 case 3 -> u.getOrganisation();
-                case 4 -> u.getUserId();
+                case 4 -> integrationEnvironment ? u.getUserIdIntegration() : u.getUserId();
                 case 5 -> u.getCertificate().isEmpty() ? "—" : "\u2713"; // checkmark or dash
                 default -> "";
             };

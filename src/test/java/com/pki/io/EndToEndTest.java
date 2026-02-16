@@ -18,7 +18,7 @@ public class EndToEndTest {
         // 1. Read the example XML
         SkaXmlReader reader = new SkaXmlReader();
         SkaConfig config = reader.read(new File("example/ska.xml"));
-        assertEquals("PROTO", config.getModuleName());
+        assertEquals("proto", config.getModuleName());
         assertEquals(9, config.getUsers().size());
 
         // 2. Import CSV users

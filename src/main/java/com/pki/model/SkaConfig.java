@@ -11,6 +11,8 @@ public class SkaConfig {
 
     private String moduleName = "";
     private int version = 1;
+    private String xsiNoNamespaceSchemaLocation = "";
+    private boolean integrationEnvironment = false;
     private SkaSection organization = new SkaSection();
     private SkaSection skaPlus = new SkaSection();
     private SkaSection skaModify = new SkaSection();
@@ -22,6 +24,12 @@ public class SkaConfig {
 
     public int getVersion() { return version; }
     public void setVersion(int version) { this.version = version; }
+
+    public String getXsiNoNamespaceSchemaLocation() { return xsiNoNamespaceSchemaLocation; }
+    public void setXsiNoNamespaceSchemaLocation(String loc) { this.xsiNoNamespaceSchemaLocation = loc != null ? loc : ""; }
+
+    public boolean isIntegrationEnvironment() { return integrationEnvironment; }
+    public void setIntegrationEnvironment(boolean integrationEnvironment) { this.integrationEnvironment = integrationEnvironment; }
 
     public SkaSection getOrganization() { return organization; }
     public void setOrganization(SkaSection organization) { this.organization = organization; }

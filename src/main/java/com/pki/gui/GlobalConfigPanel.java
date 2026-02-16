@@ -20,6 +20,7 @@ public class GlobalConfigPanel extends JPanel {
     private final JTextField moduleNameField = new JTextField(20);
     private final JSpinner versionSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 999, 1));
     private final JTextField keysChildNameField = new JTextField(12);
+    private final JTextField schemaLocationField = new JTextField(20);
 
     // Organization section
     private final JTextField orgKeyLabel = new JTextField(25);
@@ -49,6 +50,7 @@ public class GlobalConfigPanel extends JPanel {
         // Set tooltips
         moduleNameField.setToolTipText("Module name identifier (e.g. EDOC-PP-CERT-01)");
         keysChildNameField.setToolTipText("Element name inside <keys> (e.g. proto, operational)");
+        schemaLocationField.setToolTipText("XSD schema file (xsi:noNamespaceSchemaLocation, e.g. skaconfig.xsd)");
 
         // Fire listener on every keystroke in keysChildNameField
         keysChildNameField.getDocument().addDocumentListener(new DocumentListener() {
@@ -109,6 +111,9 @@ public class GlobalConfigPanel extends JPanel {
         panel.add(Box.createHorizontalStrut(16));
         panel.add(new JLabel("Keys child name:"));
         panel.add(keysChildNameField);
+        panel.add(Box.createHorizontalStrut(16));
+        panel.add(new JLabel("XSD schema:"));
+        panel.add(schemaLocationField);
         return panel;
     }
 
@@ -149,6 +154,7 @@ public class GlobalConfigPanel extends JPanel {
         moduleNameField.setText(config.getModuleName());
         versionSpinner.setValue(config.getVersion());
         keysChildNameField.setText(config.getKeysProto().getChildName());
+        schemaLocationField.setText(config.getXsiNoNamespaceSchemaLocation());
 
         // Organization
         orgKeyLabel.setText(config.getOrganization().getKeyLabel());
@@ -172,6 +178,7 @@ public class GlobalConfigPanel extends JPanel {
     public void saveTo(SkaConfig config) {
         config.setModuleName(moduleNameField.getText().trim());
         config.setVersion((int) versionSpinner.getValue());
+        config.setXsiNoNamespaceSchemaLocation(schemaLocationField.getText().trim());
         String childName = keysChildNameField.getText().trim();
         if (!childName.isEmpty()) {
             config.getKeysProto().setChildName(childName);

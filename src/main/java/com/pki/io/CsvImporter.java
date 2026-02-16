@@ -22,6 +22,7 @@ public class CsvImporter {
     private static final String COL_EMAIL = "Email";
     private static final String COL_ORG = "Organisation";
     private static final String COL_USER_ID = "userID";
+    private static final String COL_USER_ID_INTEGRATION = "userID Integration";
     private static final String COL_CERT = "cert";
     private static final String COL_ORG_OWNER = "Org Owner";
     private static final String COL_ORG_SECOFF = "Org SecOff";
@@ -73,6 +74,7 @@ public class CsvImporter {
             user.setEmail(getField(row, headerMap, COL_EMAIL).trim());
             user.setOrganisation(getField(row, headerMap, COL_ORG).trim());
             user.setUserId(getField(row, headerMap, COL_USER_ID).trim());
+            user.setUserIdIntegration(getField(row, headerMap, COL_USER_ID_INTEGRATION).trim());
 
             // Certificate: try the cert column first, then scan all columns for PEM block
             String cert = cleanCertificate(getField(row, headerMap, COL_CERT));
@@ -193,6 +195,8 @@ public class CsvImporter {
             target.setOrganisation(source.getOrganisation());
         if (target.getUserId().isEmpty() && !source.getUserId().isEmpty())
             target.setUserId(source.getUserId());
+        if (target.getUserIdIntegration().isEmpty() && !source.getUserIdIntegration().isEmpty())
+            target.setUserIdIntegration(source.getUserIdIntegration());
         // Prefer the most recent (last seen) non-empty certificate
         if (!source.getCertificate().isEmpty())
             target.setCertificate(source.getCertificate());

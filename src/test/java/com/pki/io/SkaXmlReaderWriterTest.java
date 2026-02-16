@@ -4,6 +4,7 @@ import com.pki.model.*;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -19,8 +20,9 @@ public class SkaXmlReaderWriterTest {
         SkaConfig config = reader.read(xmlFile);
 
         // Root attributes
-        assertEquals("PROTO", config.getModuleName());
+        assertEquals("proto", config.getModuleName());
         assertEquals(1, config.getVersion());
+        assertEquals("skaconfig.xsd", config.getXsiNoNamespaceSchemaLocation());
 
         // Organization section
         SkaSection org = config.getOrganization();
@@ -89,6 +91,11 @@ public class SkaXmlReaderWriterTest {
         tempFile.deleteOnExit();
         SkaXmlWriter writer = new SkaXmlWriter();
         writer.write(config, tempFile);
+
+        // Verify XML declaration does not contain standalone
+        String xmlContent = Files.readString(tempFile.toPath());
+        assertFalse("XML should not contain standalone attribute",
+                xmlContent.contains("standalone"));
 
         // Read it back
         SkaConfig roundTripped = reader.read(tempFile);

@@ -24,6 +24,7 @@ public class SkaXmlReader {
      */
     public SkaConfig read(File file) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         // Security: disable external entities
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -34,6 +35,13 @@ public class SkaXmlReader {
         SkaConfig config = new SkaConfig();
         config.setModuleName(attr(root, "moduleName"));
         config.setVersion(intAttr(root, "version", 1));
+
+        // XSD schema location (xsi:noNamespaceSchemaLocation)
+        String schemaLoc = root.getAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "noNamespaceSchemaLocation");
+        if (schemaLoc == null || schemaLoc.isEmpty()) {
+            schemaLoc = attr(root, "xsi:noNamespaceSchemaLocation");
+        }
+        config.setXsiNoNamespaceSchemaLocation(schemaLoc != null ? schemaLoc : "");
 
         // Organization
         Element orgEl = firstChild(root, "organization");

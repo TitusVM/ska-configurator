@@ -11,6 +11,7 @@ public class User {
 
     private String email = "";
     private String userId = "";
+    private String userIdIntegration = "";
     private String cn = "";          // e.g. "Baesler Boris KJBDG0"
     private String name = "";        // e.g. "Baesler Boris"
     private String organisation = "";
@@ -27,6 +28,9 @@ public class User {
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+
+    public String getUserIdIntegration() { return userIdIntegration; }
+    public void setUserIdIntegration(String userIdIntegration) { this.userIdIntegration = userIdIntegration != null ? userIdIntegration : ""; }
 
     public String getCn() { return cn; }
     public void setCn(String cn) { this.cn = cn; }

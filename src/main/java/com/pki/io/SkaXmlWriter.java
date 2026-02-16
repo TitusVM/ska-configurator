@@ -29,12 +29,19 @@ public class SkaXmlWriter {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
-        doc.setXmlStandalone(true);
+        doc.setXmlStandalone(true);  // suppress standalone attribute in XML declaration
 
         // Root: <skaconfig>
         Element root = doc.createElement("skaconfig");
         root.setAttribute("moduleName", config.getModuleName());
         root.setAttribute("version", String.valueOf(config.getVersion()));
+
+        // XSD schema location attributes
+        String schemaLoc = config.getXsiNoNamespaceSchemaLocation();
+        if (schemaLoc != null && !schemaLoc.isEmpty()) {
+            root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            root.setAttribute("xsi:noNamespaceSchemaLocation", schemaLoc);
+        }
         doc.appendChild(root);
 
         // <organization>
@@ -50,14 +57,13 @@ public class SkaXmlWriter {
         writeKeysProto(doc, root, config.getKeysProto());
 
         // <users>
-        writeUsers(doc, root, config.getUsers());
+        writeUsers(doc, root, config.getUsers(), config.isIntegrationEnvironment());
 
         // Write to file with indentation
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
         transformer.transform(new DOMSource(doc), new StreamResult(file));
@@ -167,19 +173,20 @@ public class SkaXmlWriter {
 
     // --- Users ---
 
-    private void writeUsers(Document doc, Element parent, List<User> users) {
+    private void writeUsers(Document doc, Element parent, List<User> users, boolean useIntegration) {
         Element usersEl = doc.createElement("users");
         parent.appendChild(usersEl);
 
         for (User user : users) {
-            writeUser(doc, usersEl, user);
+            writeUser(doc, usersEl, user, useIntegration);
         }
     }
 
-    private void writeUser(Document doc, Element parent, User user) {
+    private void writeUser(Document doc, Element parent, User user, boolean useIntegration) {
         Element uEl = doc.createElement("user");
         uEl.setAttribute("email", user.getEmail());
-        uEl.setAttribute("userId", user.getUserId());
+        String activeUserId = useIntegration ? user.getUserIdIntegration() : user.getUserId();
+        uEl.setAttribute("userId", activeUserId != null ? activeUserId : "");
         uEl.setAttribute("cn", user.getCn());
         uEl.setAttribute("name", user.getName());
         uEl.setAttribute("organisation", user.getOrganisation());

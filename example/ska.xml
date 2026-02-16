@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<skaconfig moduleName="PROTO" version="1">
-    <organization blockedOnInitialize="false" keyLabel="PROTO_ORG_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
+<?xml version="1.0" encoding="UTF-8"?>
+<skaconfig moduleName="proto" version="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="skaconfig.xsd">
+        <organization blockedOnInitialize="false" keyLabel="PROTO_ORG_KEY_00000" startValidity="2023-08-03"
+                  endValidity="2026-08-02">
         <ecParameters>-----BEGIN EC PARAMETERS-----
             ...
             -----END EC PARAMETERS-----
