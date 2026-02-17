@@ -1,6 +1,7 @@
 package com.pki.gui;
 
 import com.pki.model.EcParameters;
+import com.pki.util.CurveUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,6 @@ import java.awt.*;
  * and raw PEM text area.
  */
 public class EcParametersPanel extends JPanel {
-
-    private static final String[] KNOWN_CURVES = {
-            "", "brainpoolP256r1", "brainpoolP384r1", "brainpoolP512r1",
-            "prime256v1", "secp384r1", "secp521r1"
-    };
 
     private final JComboBox<String> curveCombo;
     private final JTextArea pemArea;
@@ -26,7 +22,7 @@ public class EcParametersPanel extends JPanel {
         // Curve name row
         JPanel curveRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
         curveRow.add(new JLabel("Curve name:"));
-        curveCombo = new JComboBox<>(KNOWN_CURVES);
+        curveCombo = new JComboBox<>(CurveUtils.KNOWN_CURVES);
         curveCombo.setEditable(true); // allow free text
         curveCombo.setPreferredSize(new Dimension(200, curveCombo.getPreferredSize().height));
         curveRow.add(curveCombo);

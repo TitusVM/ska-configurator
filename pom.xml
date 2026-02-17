@@ -38,6 +38,13 @@
       <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Bouncy Castle for EC parameter curve detection (named + explicit forms) -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
+      <version>1.78.1</version>
+    </dependency>
   </dependencies>
 
   <build>

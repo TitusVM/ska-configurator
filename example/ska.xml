@@ -4,7 +4,14 @@
         <organization blockedOnInitialize="false" keyLabel="PROTO_ORG_KEY_00000" startValidity="2023-08-03"
                   endValidity="2026-08-02">
         <ecParameters>-----BEGIN EC PARAMETERS-----
-            ...
+            MIIBVwIBATA8BgcqhkjOPQEBAjEA////////////////////////////////////
+            //////7/////AAAAAAAAAAD/////MHsEMP//////////////////////////////
+            ///////////+/////wAAAAAAAAAA/////AQwszEvp+I+5+SYjgVr4/gtGRgdnG7+
+            gUESAxQIj1ATh1rGVjmNii7RnSqFyO3T7CrvAxUAozWSaqMZonodAIlqZ3OkgnrN
+            rHMEYQSqh8oivosFN46xxx7zIK10bh07Younm5hZ90HgglQqOFUC8l2/VSlsOlRe
+            OHJ2Crc2F95KliYsb12emL+Sktwp+PQdvSiaFHzp2jETtfC4wApgsc4dfoGdekMd
+            fJDqDl8CMQD////////////////////////////////HY02B9Dct31gaDbJIsKd6
+            7OwZaszFKXMCAQE=
             -----END EC PARAMETERS-----
         </ecParameters>
         <operations>
@@ -119,7 +126,14 @@
     </organization>
     <skaplus blockedOnInitialize="false" keyLabel="PROTO_PLUS_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
         <ecParameters>-----BEGIN EC PARAMETERS-----
-            ...
+            MIIBVwIBATA8BgcqhkjOPQEBAjEA////////////////////////////////////
+            //////7/////AAAAAAAAAAD/////MHsEMP//////////////////////////////
+            ///////////+/////wAAAAAAAAAA/////AQwszEvp+I+5+SYjgVr4/gtGRgdnG7+
+            gUESAxQIj1ATh1rGVjmNii7RnSqFyO3T7CrvAxUAozWSaqMZonodAIlqZ3OkgnrN
+            rHMEYQSqh8oivosFN46xxx7zIK10bh07Younm5hZ90HgglQqOFUC8l2/VSlsOlRe
+            OHJ2Crc2F95KliYsb12emL+Sktwp+PQdvSiaFHzp2jETtfC4wApgsc4dfoGdekMd
+            fJDqDl8CMQD////////////////////////////////HY02B9Dct31gaDbJIsKd6
+            7OwZaszFKXMCAQE=
             -----END EC PARAMETERS-----
         </ecParameters>
         <operations>
@@ -234,7 +248,14 @@
     </skaplus>
     <skamodify blockedOnInitialize="false" keyLabel="MODIFY_KEY_00000" startValidity="2023-08-03" endValidity="2026-08-02">
         <ecParameters curveName="brainpoolXYZ">-----BEGIN EC PARAMETERS-----
-            ...
+            MIIBVwIBATA8BgcqhkjOPQEBAjEA////////////////////////////////////
+            //////7/////AAAAAAAAAAD/////MHsEMP//////////////////////////////
+            ///////////+/////wAAAAAAAAAA/////AQwszEvp+I+5+SYjgVr4/gtGRgdnG7+
+            gUESAxQIj1ATh1rGVjmNii7RnSqFyO3T7CrvAxUAozWSaqMZonodAIlqZ3OkgnrN
+            rHMEYQSqh8oivosFN46xxx7zIK10bh07Younm5hZ90HgglQqOFUC8l2/VSlsOlRe
+            OHJ2Crc2F95KliYsb12emL+Sktwp+PQdvSiaFHzp2jETtfC4wApgsc4dfoGdekMd
+            fJDqDl8CMQD////////////////////////////////HY02B9Dct31gaDbJIsKd6
+            7OwZaszFKXMCAQE=
         </ecParameters>
         <operations>
             <use delayMillis="0" timeLimitMillis="0">
@@ -391,7 +412,14 @@
                 </unblock>
             </operations>
             <ecParameters>-----BEGIN EC PARAMETERS-----
-                ...
+                MIIBVwIBATA8BgcqhkjOPQEBAjEA////////////////////////////////////
+            //////7/////AAAAAAAAAAD/////MHsEMP//////////////////////////////
+            ///////////+/////wAAAAAAAAAA/////AQwszEvp+I+5+SYjgVr4/gtGRgdnG7+
+            gUESAxQIj1ATh1rGVjmNii7RnSqFyO3T7CrvAxUAozWSaqMZonodAIlqZ3OkgnrN
+            rHMEYQSqh8oivosFN46xxx7zIK10bh07Younm5hZ90HgglQqOFUC8l2/VSlsOlRe
+            OHJ2Crc2F95KliYsb12emL+Sktwp+PQdvSiaFHzp2jETtfC4wApgsc4dfoGdekMd
+            fJDqDl8CMQD////////////////////////////////HY02B9Dct31gaDbJIsKd6
+            7OwZaszFKXMCAQE=
                 -----END EC PARAMETERS-----
             </ecParameters>
         </proto>

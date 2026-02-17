@@ -1,6 +1,7 @@
 package com.pki.gui;
 
 import com.pki.io.CsvImporter;
+import com.pki.io.ReportGenerator;
 import com.pki.io.SkaXmlReader;
 import com.pki.io.SkaXmlWriter;
 import com.pki.model.SkaConfig;
@@ -254,6 +255,10 @@ public class MainFrame extends JFrame {
         importCsvItem.setAccelerator(KeyStroke.getKeyStroke("control I"));
         importCsvItem.addActionListener(e -> doImportCsv());
 
+        JMenuItem reportItem = new JMenuItem("Generate Report…");
+        reportItem.setAccelerator(KeyStroke.getKeyStroke("control R"));
+        reportItem.addActionListener(e -> doGenerateReport());
+
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(e -> doExit());
 
@@ -266,6 +271,7 @@ public class MainFrame extends JFrame {
         fileMenu.add(saveAllItem);
         fileMenu.addSeparator();
         fileMenu.add(importCsvItem);
+        fileMenu.add(reportItem);
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
@@ -829,6 +835,74 @@ public class MainFrame extends JFrame {
         }
         newName.append("_v").append(version).append(ext);
         return dir != null ? new File(dir, newName.toString()) : new File(newName.toString());
+    }
+
+    private void doGenerateReport() {
+        if (config == null) {
+            JOptionPane.showMessageDialog(this, "No configuration loaded.",
+                    "Generate Report", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Sync current UI state into model before generating report
+        collectUIIntoModel();
+
+        int ans = JOptionPane.showConfirmDialog(this,
+                "Generate a validation report?\n\n"
+                        + "This will create two CSV files:\n"
+                        + "  \u2022 report_memberships.csv \u2014 group memberships, operations, EC curves\n"
+                        + "  \u2022 report_users.csv \u2014 user list with certificate details\n\n"
+                        + "You will be prompted to choose an output folder.",
+                "Generate Report", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (ans != JOptionPane.YES_OPTION) return;
+
+        // Choose output directory
+        JFileChooser chooser = fastFileChooser(
+                workspaceFolder != null ? workspaceFolder : (currentFile != null ? currentFile.getParentFile() : new File(".")));
+        chooser.setDialogTitle("Select Output Folder for Report");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+        File outputDir = chooser.getSelectedFile();
+
+        try {
+            // Build list of entries and users
+            List<SkaConfigEntry> entries;
+            List<User> users;
+
+            if (!workspace.getEntries().isEmpty()) {
+                // Folder mode: report all loaded entries
+                entries = workspace.getEntries();
+                users = new java.util.ArrayList<>(workspace.getMasterUserPool());
+            } else {
+                // Single-file mode
+                SkaConfigEntry single = new SkaConfigEntry(config,
+                        currentFile != null ? currentFile : new File("unsaved.xml"));
+                entries = List.of(single);
+                users = config.getUsers();
+            }
+
+            ReportGenerator generator = new ReportGenerator();
+            ReportGenerator.ReportResult result = generator.generate(entries, users, outputDir);
+
+            statusBar.setText("Report generated: " + result.membershipRows
+                    + " membership rows, " + result.userRows + " users");
+
+            JOptionPane.showMessageDialog(this,
+                    "Report generated successfully!\n\n"
+                            + "Membership report: " + result.membershipFile.getName()
+                            + " (" + result.membershipRows + " rows)\n"
+                            + "User report: " + result.userFile.getName()
+                            + " (" + result.userRows + " users)\n\n"
+                            + "Output folder:\n" + outputDir.getAbsolutePath(),
+                    "Report Generated", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Failed to generate report:\n" + ex.getMessage(),
+                    "Report Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void doImportCsv() {

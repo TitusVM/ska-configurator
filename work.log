@@ -157,3 +157,52 @@
         • testActiveIndexSwitching: multi-entry index management on add/remove
         • testMasterPoolMerge: blank-field fill-in, no-overwrite, union by CN
       — All 14 tests pass (9 original + 5 new), clean build, fat JAR OK
+
+---
+### Phase 11: Validation Report Generation (2026-02-16)
+
+#### Design decisions
+- Report triggered from File menu ("Generate Report…", Ctrl+R) with Yes/No confirmation dialog
+- Produces two CSV files (Excel-importable via OpenCSV):
+  1. **report_memberships.csv** — flat view of every group membership across all sections/operations/boundaries
+  2. **report_users.csv** — user list with parsed X.509 certificate details
+- Works in both single-file and folder mode (reports all loaded SKAs)
+- User chooses output directory via folder chooser
+- EC curve detection: extracted shared `CurveUtils` utility (DRY principle — was duplicated in `EcParametersPanel`)
+- EC curve resolution strategy: named > OID-detected from PEM > "Explicit parameters" > "(none)"
+- Certificate parsing via JDK's `java.security.cert.X509Certificate` — no extra dependencies
+
+#### Implementation plan
+- [x] 11.1 CurveUtils utility class (com.pki.util)
+      — Shared KNOWN_CURVES array (single source of truth)
+      — OID→curve name map for ASN.1-based detection from raw PEM (brainpool, NIST/SECG curves)
+      — detectCurveFromPem(): Base64 decode → hex scan for known OIDs
+      — resolveCurveName(): named → detected → "Explicit parameters" → "(none)"
+      — EcParametersPanel updated to use CurveUtils.KNOWN_CURVES (removed local duplicate)
+- [x] 11.2 CertUtils utility class (com.pki.util)
+      — Parses PEM-encoded X.509 certs via CertificateFactory
+      — Extracts: Subject, Issuer, Not Before, Not After, Serial Number, Key Usage bits, SHA-256 fingerprint
+      — Graceful null/blank/malformed handling (returns null on parse failure)
+      — Key usage bit names per RFC 5280
+- [x] 11.3 ReportGenerator (com.pki.io)
+      — generate(): produces both CSV files in one call, returns ReportResult with file refs + row counts
+      — Membership report columns: SKA Module, Section, EC Curve, Key Label, Start/End Validity,
+        Blocked On Init, Operation, Delay, Time Limit, Boundary #, Group Name, Quorum, Type (Member/Key), Member/Key value
+      — Handles: empty boundaries ("no boundaries" row), empty groups, key-only groups vs member groups
+      — Member CN→Name resolution via lookup map from user pool
+      — Covers all sections: Organization, SKA Plus, SKA Modify, Keys (with dynamic child name)
+      — User report columns: CN, Name, Email, Organisation, Has Certificate, Subject, Issuer,
+        Not Before, Not After, Key Usage, Serial Number, SHA-256 Fingerprint
+      — Users sorted by CN (case-insensitive) for clean report output
+- [x] 11.4 MainFrame integration
+      — "Generate Report…" menu item (Ctrl+R) between Import CSV and Exit
+      — doGenerateReport(): syncs UI→model before generating, handles single-file and folder mode
+      — Folder chooser for output directory (defaults to workspace or current file folder)
+      — Success dialog with row counts and output path; error dialog on failure
+- [x] 11.5 JFileChooser performance fix (bonus)
+      — All 5 JFileChooser instantiations replaced with fastFileChooser() helper
+      — Sets FileChooser.useShellFolder=false to bypass Windows shell integration (15s → instant)
+- [x] 11.6 Tests
+      — CurveUtilsTest (10 tests): curve resolution, PEM detection, null/malformed handling, known curves array
+      — ReportGeneratorTest (4 tests): full XML report, user report, empty boundaries, multi-entry report
+      — All 38 tests pass (24 previous + 10 CurveUtils + 4 ReportGenerator), clean build
