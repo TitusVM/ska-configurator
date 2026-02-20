@@ -55,6 +55,7 @@ public class MainFrame extends JFrame {
     private final SectionPanel skaPlusPanel;
     private final SectionPanel skaModifyPanel;
     private final KeysProtoPanel keysProtoPanel;
+    private final PersoKekPanel persoKekPanel;
     private final UsersPanel usersPanel;
     private final JTabbedPane tabbedPane;
     private final JLabel statusBar;
@@ -135,6 +136,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel = new SectionPanel();
         skaModifyPanel = new SectionPanel();
         keysProtoPanel = new KeysProtoPanel();
+        persoKekPanel = new PersoKekPanel();
         usersPanel = new UsersPanel();
         usersPanel.setStatusCallback(this::setStatus);
         usersPanel.setDirtyCallback(this::markDirty);
@@ -152,6 +154,7 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("SKA Plus", skaPlusPanel);
         tabbedPane.addTab("SKA Modify", skaModifyPanel);
         tabbedPane.addTab("Keys", keysProtoPanel);
+        tabbedPane.addTab("PersoKEK", persoKekPanel);
         tabbedPane.addTab("Users", usersPanel);
 
         // Update Keys tab label dynamically when user types in the keys child name field
@@ -1115,6 +1118,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel.loadFrom(config.getSkaPlus());
         skaModifyPanel.loadFrom(config.getSkaModify());
         keysProtoPanel.loadFrom(config.getKeysProto());
+        persoKekPanel.loadFrom(config.getPersonalization());
 
         // Users: workspace mode shows master pool + per-SKA checkboxes
         if (workspaceFolder != null && workspace.getEntries().size() > 1) {
@@ -1265,6 +1269,7 @@ public class MainFrame extends JFrame {
         skaPlusPanel.saveTo(config.getSkaPlus());
         skaModifyPanel.saveTo(config.getSkaModify());
         keysProtoPanel.saveTo(config.getKeysProto());
+        persoKekPanel.saveTo(config.getPersonalization());
         config.setIntegrationEnvironment(integrationRadio.isSelected());
 
         // In workspace mode, sync per-SKA user list from pool checkboxes

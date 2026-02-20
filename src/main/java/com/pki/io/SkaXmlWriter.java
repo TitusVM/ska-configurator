@@ -53,8 +53,8 @@ public class SkaXmlWriter {
         // <skamodify>
         writeSection(doc, root, "skamodify", config.getSkaModify());
 
-        // <keys><proto>
-        writeKeysProto(doc, root, config.getKeysProto());
+        // <keys><proto> + optional <personalization>
+        writeKeysProto(doc, root, config.getKeysProto(), config.getPersonalization());
 
         // <users>
         writeUsers(doc, root, config.getUsers(), config.isIntegrationEnvironment());
@@ -83,16 +83,33 @@ public class SkaXmlWriter {
         writeOperations(doc, el, section.getOperations());
     }
 
-    private void writeKeysProto(Document doc, Element parent, KeysProto keysProto) {
+    private void writeKeysProto(Document doc, Element parent, KeysProto keysProto, Personalization perso) {
         String childTag = keysProto.getChildName();
-        if (childTag == null || childTag.isEmpty()) return; // no keys block if no child name set
+        boolean hasChild = childTag != null && !childTag.isEmpty();
+        boolean hasPerso = perso != null && perso.isEnabled();
+        if (!hasChild && !hasPerso) return; // nothing to write
+
         Element keysEl = doc.createElement("keys");
         parent.appendChild(keysEl);
-        Element childEl = doc.createElement(childTag);
-        keysEl.appendChild(childEl);
 
-        writeOperations(doc, childEl, keysProto.getOperations());
-        writeEcParameters(doc, childEl, keysProto.getEcParameters());
+        if (hasChild) {
+            Element childEl = doc.createElement(childTag);
+            keysEl.appendChild(childEl);
+            writeOperations(doc, childEl, keysProto.getOperations());
+            writeEcParameters(doc, childEl, keysProto.getEcParameters());
+        }
+
+        if (hasPerso) {
+            writePersonalization(doc, keysEl, perso);
+        }
+    }
+
+    private void writePersonalization(Document doc, Element parent, Personalization perso) {
+        Element el = doc.createElement("personalization");
+        el.setAttribute("useKek", String.valueOf(perso.isUseKek()));
+        el.setAttribute("kekLabel", perso.getKekLabel());
+        parent.appendChild(el);
+        writeEcParameters(doc, el, perso.getEcParameters());
     }
 
     // --- EC Parameters ---

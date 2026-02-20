@@ -71,6 +71,12 @@ public class SkaXmlReader {
                 kp.setChildName(childEl.getTagName());
                 config.setKeysProto(kp);
             }
+
+            // <personalization useKek="true" kekLabel="..."> inside <keys>
+            Element persoEl = firstChild(keysEl, "personalization");
+            if (persoEl != null) {
+                config.setPersonalization(readPersonalization(persoEl));
+            }
         }
 
         // Users
@@ -106,6 +112,15 @@ public class SkaXmlReader {
             kp.setOperations(readOperations(opsEl));
         }
         return kp;
+    }
+
+    private Personalization readPersonalization(Element el) {
+        Personalization p = new Personalization();
+        p.setEnabled(true); // tag is present → enabled
+        p.setUseKek(Boolean.parseBoolean(attr(el, "useKek")));
+        p.setKekLabel(attr(el, "kekLabel"));
+        p.setEcParameters(readEcParameters(el));
+        return p;
     }
 
     // --- EC Parameters ---

@@ -17,6 +17,7 @@ public class SkaConfig {
     private SkaSection skaPlus = new SkaSection();
     private SkaSection skaModify = new SkaSection();
     private KeysProto keysProto = new KeysProto();
+    private Personalization personalization = new Personalization();
     private List<User> users = new ArrayList<>();
 
     public String getModuleName() { return moduleName; }
@@ -42,6 +43,9 @@ public class SkaConfig {
 
     public KeysProto getKeysProto() { return keysProto; }
     public void setKeysProto(KeysProto keysProto) { this.keysProto = keysProto; }
+
+    public Personalization getPersonalization() { return personalization; }
+    public void setPersonalization(Personalization personalization) { this.personalization = personalization; }
 
     public List<User> getUsers() { return users; }
     public void setUsers(List<User> users) { this.users = users; }
