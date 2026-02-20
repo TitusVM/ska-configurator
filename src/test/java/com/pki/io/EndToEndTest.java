@@ -1,6 +1,7 @@
 package com.pki.io;
 
 import com.pki.model.*;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,8 +23,10 @@ public class EndToEndTest {
         assertEquals(9, config.getUsers().size());
 
         // 2. Import CSV users
+        File csvFile = new File("exports/export.csv");
+        Assume.assumeTrue("Skipping: exports/export.csv not found", csvFile.exists());
         CsvImporter importer = new CsvImporter();
-        List<User> csvUsers = importer.importUsers(new File("exports/export.csv"));
+        List<User> csvUsers = importer.importUsers(csvFile);
         assertFalse("CSV should produce users", csvUsers.isEmpty());
 
         // 3. Merge: detect new users from CSV not in XML
