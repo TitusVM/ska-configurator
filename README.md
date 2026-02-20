@@ -1,6 +1,6 @@
 # SKA Configurator
 
-A Java Swing desktop application for creating and editing **Smart Key Attributes (SKA)** configuration files .
+A Java Swing desktop application for creating and editing **Smart Key Attributes (SKA)** configuration files.
 
 ---
 
@@ -115,7 +115,7 @@ Imports users from Jira CSV asset exports (RFC 4180 format with multiline quoted
 
 ### XML Output
 
-- Follows the organization SKA configuration format (see `example/ska.xml`)
+- Follows the SKA configuration format (see `example/ska.xml`)
 - Proper indentation for human readability
 - CDATA sections for certificate content
 - `curveName` attribute preserved on `ecParameters` elements
